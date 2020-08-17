@@ -1,0 +1,12 @@
+html{
+    margin:0;
+    height:100%;
+}
+body {
+    margin:0;
+    height:100%;
+    background: url(background.jpeg);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: 100% 100%;
+}
