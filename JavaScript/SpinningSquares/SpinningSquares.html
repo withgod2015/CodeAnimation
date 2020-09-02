@@ -1,0 +1,71 @@
+<html>
+<canvas id = 'myCanvas' width = '200' height = '200' > </canvas>
+<script>
+let canvas = document.getElementById('myCanvas');
+let context = canvas.getContext('2d');
+let degrees = 0;
+let colors = ['blue', 'black'];
+let radius = 8,  maxRows = 16;
+let phase = true;
+requestAnimationFrame(animate);
+ 
+function animate() {
+  let angle = Math.PI / 180 * degrees;
+  context.fillStyle = colors[!phase * 1];
+  context.fillRect(0, 0, canvas.width, canvas.height);
+  context.fillStyle = colors[phase * 1];
+  for (let row = 0; row < maxRows; row++)
+    for (let column = 0; column < maxRows; column++) {
+      let x = column * radius * 2 + phase * radius;
+      let y = row * radius * 2 + phase * radius;
+      context.beginPath();
+      context.moveTo(x + radius * Math.cos(angle), y + radius * Math.sin(angle));
+      context.lineTo(x + radius * Math.cos(angle + Math.PI / 2), y + radius * Math.sin(angle + Math.PI / 2));
+      context.lineTo(x + radius * Math.cos(angle + Math.PI), y + radius * Math.sin(angle + Math.PI));
+      context.lineTo(x + radius * Math.cos(angle + Math.PI * 1.5), y + radius * Math.sin(angle + Math.PI * 1.5));
+      context.fill();
+    }
+  degrees++;
+  if (degrees % 180 == 0) phase = !phase;
+  requestAnimationFrame(animate);
+}
+</script>
+</html>
+
+<!--
+What color are the spinning squares?
+Look at these blue spinning squares! I mean black. I mean blue.
+Are they blue or black? The answer is: yes.
+
+It's a very simple optical illusion: first, black squares are spinning against a blue background. Then, it's the opposite.
+The switch happens when the background and the foreground consist of squares of identical sizes, so your brain tends not to notice the transitions.
+It thinks it's one continuous rotation, because in the last 100,000 years of evolution none of our ancestors spent a lot of time watching this type of animation.
+
+Let's take a closer look at the short (25 lines) JavaScript snippet that fools our brains so efficiently. I'm using the JavaScript nomenclature for coordinates and angles.
+
+[1-5] Our HTML page will only consist of a small Canvas.
+[6] The 'degrees' variable will determine the angle of rotation of the squares. Start at zero.
+[7] A small array of color names.
+[8] Parameters of the squares.
+[9] The 'phase' determines whether black squares are spinning on a blue background (if the value is 'true') or the other way round (if 'false').
+[10] Kick off the animation.
+
+[12-31] The 'animate' function is where all the action happens:
+[13] Convert degrees to radians, because the Math.sin takes input in radians.
+[14-15] Draw the background. The 'true/false' value is first reversed (so that the background color is the opposite of the squares color) and then converted into 0 and 1 and the respective color is pulled from the 'color' array.
+[16] The squares color is determined similarly, but without the reversal.
+[17-18] Draw the squares in rows and columns.
+[19-20] Calculate the center of each square:
+The squares will rotate in a circle, so the distance between the centers of the squares must be equal to twice the radius, so that each vertex touches another one when the rotation angle equals to multiples of 90 degrees). In other words, the diameter (2*radius) of the circle is the diagonal of the square.
+If the phase is 'true', shift the centers by one radius to the right and down, so that the centers of the black squares are placed correctly.
+[22-25] Draw the four sides of the square.
+We're using this basic formula to find the coordinates of a point on a circle on the Cartesian plane:
+Xp = radius * cos(angle)
+Yp = radius * sin(angle)
+
+The first vertex (A) uses the 'angle' rotation. Every subsequent vertex (B, C, D) is rotated by an additional 90 degrees (π/2).
+Only draw three sides and then [26] fill the shape, so the resulting shape is a square. The red arc below shows the circular path from 0 to 270 degrees.
+[28] Increase the rotation angle.
+[29] Reverse the phase every 180 degrees.
+[30] Wait for the next animation frame.
+-->
